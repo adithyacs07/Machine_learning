@@ -1,0 +1,1038 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import LabelEncoder
+from scipy import stats
+data = pd.read_csv('C:/Users/pc/Desktop/FAKE NEWS DATASET.csv')
+#displauying first 10 rows
+data.head(10)
+#displaying last 10 rows
+data.tail(10)
+#displaying number of rows and columns
+data.shape
+#i will see the uniqueness of the dataset
+data.nunique()
+#i will find the datatypes 
+data.dtypes
+#missing value analysis
+data.isnull().sum()
+#filling of missing value and dropping of few attributes
+
+data['Author'] = data['Author'].bfill()
+data['Title'] = data['Title'].bfill()
+data['Text'] = data['Text'].bfill()
+data['Language'] = data['Language'].bfill()
+data['Site_url'] = data['Site_url'].bfill()
+data['Type'] = data['Type'].bfill()
+data['HasImage'] = data['HasImage'].bfill()
+data['Label'] = data['Label'].bfill()
+
+#dropping of remaining
+data.drop(['Published'],axis=1,inplace=True)
+data.drop(['Main_img_url'],axis=1,inplace=True)
+data.drop(['Title_without_stopwords'],axis=1,inplace=True)
+data.drop(['Text_without_stopwords'],axis=1,inplace=True)
+data.isnull().sum()
+data.info()
+#i will get the valuecounts for each attribute as this will be easier for missing value analysis
+print('==============Value counts for author==============\n',data['Author'].value_counts())
+print('==============Value countsfor Title==============\n',data['Title'].value_counts())
+print('==============Value counts for Text==============\n',data['Text'].value_counts())
+print('==============Value counts for Language==============\n',data['Language'].value_counts())
+print('==============Value counts for Site_urlMain_img_url ==============\n',data['Site_url'].value_counts())
+print('==============Value counts for Type==============\n',data['Type'].value_counts())
+print('==============Value counts for Label==============\n',data['Label'].value_counts())
+print('==============Value counts for HasImage==============\n',data['HasImage'].value_counts())
+# import pandas as pd
+
+# # Categorical columns for one-hot encoding
+# categorical_columns = ['Author', 'Language', 'Type']
+
+# # Perform one-hot encoding
+# df_encoded = pd.get_dummies(data, columns=categorical_columns,dtype=int)
+# print(df_encoded)
+# import pandas as pd
+# from sklearn.feature_extraction.text import TfidfVectorizer
+
+# # Assuming 'df' is your DataFrame
+# # Replace 'Title' and 'Text' with the actual column names in your dataset
+
+# # Create a TF-IDF vectorizer for the 'Title' column
+# tfidf_vectorizer_title = TfidfVectorizer(max_features=500, stop_words='english')
+# tfidf_title = tfidf_vectorizer_title.fit_transform(data['Title'])
+
+# # Create a TF-IDF vectorizer for the 'Text' column
+# tfidf_vectorizer_text = TfidfVectorizer(max_features=1000, stop_words='english')
+# tfidf_text = tfidf_vectorizer_text.fit_transform(data['Text'])
+
+# # Convert the TF-IDF matrices into DataFrames
+# df_tfidf_title = pd.DataFrame(tfidf_title.toarray(), columns=tfidf_vectorizer_title.get_feature_names_out())
+# df_tfidf_text = pd.DataFrame(tfidf_text.toarray(), columns=tfidf_vectorizer_text.get_feature_names_out())
+
+# # Now, you have numerical representations of the text data in 'df_tfidf_title' and 'df_tfidf_text'
+
+#i cannot find outliers for title and text
+
+#To find and plot outliers for all the columns in your dataset, you can create box plots for numerical columns and 
+#scatter plots for bivariate outlier detection. However, for text-based columns like 'Title' and 'Text,' 
+#detecting outliers in the traditional sense may not be meaningful since text data doesn't have a natural concept of outliers. 
+#You can focus on the numerical columns like 'HasImage' for outlier detection.
+# import matplotlib.pyplot as plt
+# import pandas as pd
+
+# print('==========BOX PLOT FOR HasImage==========')
+# # Numerical columns in your dataset
+# numerical_columns = ['HasImage']
+
+# # Create box plots for numerical columns to find outliers
+# plt.figure(figsize=(12, 8))
+# data[numerical_columns].boxplot()
+# plt.title('Box Plots for Numerical Columns')
+# plt.show()
+
+
+# for column in numerical_columns:
+#     plt.figure(figsize=(8, 6))
+#     plt.scatter(data[column], data['Label'])
+#     plt.title(f'Scatter Plot of {column} vs. Label')
+#     plt.xlabel(column)
+#     plt.ylabel('Label')
+#     plt.show()
+
+# print('==========BOX PLOT FOR AUTHOR==========')
+
+# # import matplotlib.pyplot as plt
+# # import pandas as pd
+
+# # # Assuming 'data' is your DataFrame
+
+# # # Numerical columns in your dataset
+# numerical_columns = ['Author']
+
+# # Create box plots for numerical columns to find outliers
+# plt.figure(figsize=(12, 8))
+# data[numerical_columns].boxplot()
+# plt.title('Box Plots ')
+# plt.show()
+
+# # Bivariate outlier detection (scatter plots) for numerical columns
+# for column in numerical_columns:
+#     plt.figure(figsize=(8, 6))
+#     plt.scatter(data[column], data['Label'])
+#     plt.title(f'Scatter Plot of {column} vs. Label')
+#     plt.xlabel(column)
+#     plt.ylabel('Label')
+#     plt.show()
+
+
+
+# print('==========BOX PLOT FOR Title==========')
+# # import matplotlib.pyplot as plt
+# # import pandas as pd
+
+# # # Assuming 'data' is your DataFrame
+
+# # # Numerical columns in your dataset
+# numerical_columns = ['Title']
+
+# # Create box plots for numerical columns to find outliers
+# plt.figure(figsize=(12, 8))
+# data[numerical_columns].boxplot()
+# plt.title('Box Plots ')
+# plt.show()
+
+# # Bivariate outlier detection (scatter plots) for numerical columns
+# for column in numerical_columns:
+#     plt.figure(figsize=(8, 6))
+#     plt.scatter(data[column], data['Label'])
+#     plt.title(f'Scatter Plot of {column} vs. Label')
+#     plt.xlabel(column)
+#     plt.ylabel('Label')
+#     plt.show()
+
+
+# print('==========BOX PLOT FOR Text==========')
+# # import matplotlib.pyplot as plt
+# # import pandas as pd
+
+# # # Assuming 'data' is your DataFrame
+
+# # # Numerical columns in your dataset
+# numerical_columns = ['Text']
+
+# # Create box plots for numerical columns to find outliers
+# plt.figure(figsize=(12, 8))
+# data[numerical_columns].boxplot()
+# plt.title('Box Plots ')
+# plt.show()
+
+# # Bivariate outlier detection (scatter plots) for numerical columns
+# for column in numerical_columns:
+#     plt.figure(figsize=(8, 6))
+#     plt.scatter(data[column], data['Label'])
+#     plt.title(f'Scatter Plot of {column} vs. Label')
+#     plt.xlabel(column)
+#     plt.ylabel('Label')
+#     plt.show()
+
+
+
+# import pandas as pd
+# from sklearn.feature_extraction.text import TfidfVectorizer
+
+# # Categorical columns for one-hot encoding
+# categorical_columns = ['Author', 'Language', 'Type']
+
+# # Perform one-hot encoding
+# df_encoded = pd.get_dummies(data, columns=categorical_columns, dtype=int)
+
+# # Create a TF-IDF vectorizer for the 'Title' column
+# tfidf_vectorizer_title = TfidfVectorizer(max_features=500, stop_words='english')
+# tfidf_title = tfidf_vectorizer_title.fit_transform(data['Title'])
+# df_tfidf_title = pd.DataFrame(tfidf_title.toarray(), columns=tfidf_vectorizer_title.get_feature_names_out())
+
+# # Create a TF-IDF vectorizer for the 'Text' column
+# tfidf_vectorizer_text = TfidfVectorizer(max_features=1000, stop_words='english')
+# tfidf_text = tfidf_vectorizer_text.fit_transform(data['Text'])
+# df_tfidf_text = pd.DataFrame(tfidf_text.toarray(), columns=tfidf_vectorizer_text.get_feature_names_out())
+
+# # Now, you have numerical representations in 'df_encoded' (one-hot encoded) and 'df_tfidf_title' and 'df_tfidf_text' (TF-IDF vectorized).
+
+# # Check the data types of these DataFrames
+# print("Data Types of df_encoded:")
+# print(df_encoded.dtypes)
+
+# print("Data Types of df_tfidf_title:")
+# print(df_tfidf_title.dtypes)
+
+# print("Data Types of df_tfidf_text:")
+# print(df_tfidf_text.dtypes)
+
+from sklearn.preprocessing import LabelEncoder
+
+print('CONVERSION OF CATEGORICAL INTO NUMERICAL')
+label_encoder = LabelEncoder()
+data['Author'] = label_encoder.fit_transform(data['Author'])
+
+data['Title'] = label_encoder.fit_transform(data['Title'])
+data['Text'] = label_encoder.fit_transform(data['Text'])
+data['Language'] = label_encoder.fit_transform(data['Language'])
+data['Site_url'] = label_encoder.fit_transform(data['Site_url'])
+
+data['Type'] = label_encoder.fit_transform(data['Type'])
+
+
+
+#my dependent variable ie Label has 3 counts ie Real, fake and 1
+#Now i will remove the rows that has 1
+data = data[data['Label'] != 1]
+
+#now i will convert real = 0 and fake = 1
+data['Label'] = data['Label'].apply(lambda x: 1 if x == 'Fake' else 0)
+
+
+
+print('----------------')
+data.head(10)
+
+
+data.info()
+import pandas as pd
+from scipy import stats
+
+# Assuming 'data' is your DataFrame
+
+# Select only the numeric columns for outlier detection
+numeric_columns = data.select_dtypes(include=[int, float])
+
+# Set the Z-score threshold for outlier detection
+z_score_threshold = 3  # You can adjust this threshold as needed
+
+# Create a DataFrame to store the outliers
+outliers = pd.DataFrame()
+
+# Iterate through each numeric column and detect outliers using Z-score
+for column in numeric_columns.columns:
+    z_scores = stats.zscore(numeric_columns[column])
+    abs_z_scores = abs(z_scores)
+    outliers[column] = abs_z_scores > z_score_threshold
+
+# Now, the 'outliers' DataFrame contains True for rows with outliers, and False for rows without outliers
+
+# You can print the rows with outliers
+outliers_with_rows = data[outliers.any(axis=1)]
+print(outliers_with_rows)
+
+# import matplotlib.pyplot as plt
+
+# Create a copy of the data to preserve the original DataFrame
+data_copy = data.copy()
+
+# Iterate through each numeric column and create box plots
+for column in numeric_columns.columns:
+    plt.figure(figsize=(8, 4))
+    plt.title(f'Box Plot of {column}')
+    plt.boxplot(data_copy[column], vert=False)
+    
+    # Mark the outliers in red
+    outliers_column = data_copy[column][outliers[column]]
+    plt.plot(outliers_column, [1] * len(outliers_column), 'ro', label='Outliers')
+    
+    plt.xlabel(column)
+    plt.legend()
+    plt.show()
+# This code will generate box plots for each numeric column in your DataFrame and mark the outliers in red. 
+# You can adjust the figure size, labels, and other plot settings as needed.
+# To plot histograms for each variable in your DataFrame, you can use the following code. 
+# This code will create individual histograms for each numeric column:
+
+
+import matplotlib.pyplot as plt
+
+# Select only the numeric columns for histogram plotting
+numeric_columns = data.select_dtypes(include=['int', 'float'])
+
+# Set the number of bins for the histograms
+num_bins = 20  # You can adjust the number of bins as needed
+
+# Iterate through each numeric column and create histograms
+for column in numeric_columns.columns:
+    plt.figure(figsize=(8, 4))
+    plt.hist(data[column], bins=num_bins, color='blue', alpha=0.7)
+    
+    plt.title(f'Histogram of {column}')
+    plt.xlabel(column)
+    plt.ylabel('Frequency')
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    
+    plt.show()
+ 
+#describe
+data.describe()
+#counting the vaue 
+data.value_counts()
+#to find the corelation 
+# 1 indicates a strong positive correlation.
+# -1 indicates a strong negative correlation.
+# 0 indicates no linear correlation.
+
+data.corr()
+#to visualize the corelation matrix heat map is used
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Create a heatmap of the correlation matrix
+plt.figure(figsize=(12, 8))
+sns.heatmap(data.corr(), annot=True, cmap='coolwarm', fmt=".2f")
+plt.title("Correlation Heatmap")
+plt.show()
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Assuming 'data' is your DataFrame with all columns as numerical including 'Label'
+
+# List of all independent attributes (including numerical columns)
+independent_columns = ['Author', 'Title', 'Text', 'Language', 'Site_url', 'Type', 'HasImage']
+
+# Iterate through each independent variable
+for column in independent_columns:
+    # Create a cross-tabulation between the independent and dependent variables
+    crosstab = pd.crosstab(data[column], data['Label'])
+    
+    # Plot a stacked bar chart for the cross-tabulation
+    crosstab.plot(kind='bar', stacked=True)
+    
+    # Add labels and title
+    plt.xlabel(column)
+    plt.ylabel('Count')
+    plt.title(f'Bivariate Analysis for {column} vs. Label')
+    
+    # Show the plot
+    plt.show()
+
+# there are other ways to perform bivariate analysis between your independent attributes 
+# and the dependent attribute 'Label.' Here are a few alternative methods:
+#first way=Correlation Matrix
+correlation_matrix = data.corr()
+correlation_with_label = correlation_matrix['Label'].sort_values(ascending=False)
+print(correlation_with_label)
+
+#second way=Pairplots
+import seaborn as sns
+
+# Select a subset of columns for pair plotting
+selected_columns = ['Label','Author', 'Title', 'Text', 'Language', 'Site_url', 'Type', 'HasImage']
+sns.pairplot(data[selected_columns], hue='Label', markers=["o", "s"])
+
+# To perform bivariate analysis between each of your independent attributes ('Author', 'Title', 'Text', 'Language', 'Site_url', 'Type', 'HasImage')
+# and the dependent attribute 'Label,' you can use various statistical tests. Since your 'Label' column is binary (0 or 1), 
+# you can use methods like t-tests for continuous variables ('Title') and chi-squared tests for categorical variables 
+# ('Author', 'Language', 'Type', 'Site_url', 'HasImage').
+
+# Here's a code example that performs bivariate analysis for each of these columns with 'Label':
+
+# This code iterates through your independent columns, checks their data types, and performs t-tests for numeric columns 
+# and chi-squared tests for categorical columns with 'Label.' It reports whether the bivariate analysis is statistically significant.
+
+# Remember to replace 'your_dataset.csv' with the actual file path to your dataset. This code will provide you with insights into the relationships
+# between each independent attribute and 'Label.'
+
+
+# import pandas as pd
+# from scipy.stats import ttest_ind, chi2_contingency
+
+
+
+# # List of independent columns
+# independent_columns = ['Author', 'Title', 'Text', 'Language', 'Site_url', 'Type', 'HasImage']
+
+# # Iterate through each independent column
+# for column in independent_columns:
+#     if data[column].dtype in [int, float]:
+#         # Independent variable is numeric
+#         real_group = data[data['Label'] == 0][column]
+#         fake_group = data[data['Label'] == 1][column]
+        
+#         # Perform a t-test
+#         t_statistic, p_value = ttest_ind(real_group, fake_group, equal_var=False)
+#     else:
+#         # Independent variable is categorical
+#         contingency_table = pd.crosstab(data[column], data['Label'])
+        
+#         # Perform a chi-squared test
+#         chi2, p_value, dof, expected = chi2_contingency(contingency_table)
+
+#     alpha = 0.05
+
+#     # Check for statistical significance
+#     if p_value < alpha:
+#         print(f"Bivariate analysis for {column}: Statistically significant (p-value = {p_value})")
+#     else:
+#         print(f"Bivariate analysis for {column}: Not statistically significant (p-value = {p_value})")
+
+#Bivariate analysis-----> BOX PLOT
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+
+# List of independent variables
+independent_variables = ['Author', 'Title', 'Text', 'Language', 'Site_url', 'Type', 'HasImage']
+
+# Set the figure size and style
+plt.figure(figsize=(15, 10))
+sns.set(style="whitegrid")
+
+# Iterate through each independent variable and create a boxplot
+for var in independent_variables:
+    plt.figure()
+    sns.boxplot(x='Label', y=var, data=data)
+    plt.title(f'Boxplot of {var} vs. Label')
+    plt.show()
+
+#Bivariate analysis-----> TT TEST
+from scipy import stats
+
+
+
+# List of independent variables
+independent_variables = ['Author', 'Title', 'Text', 'Language', 'Site_url', 'Type', 'HasImage']
+
+# Iterate through each independent variable and perform a t-test
+for var in independent_variables:
+    real_data = data[data['Label'] == 0][var]
+    fake_data = data[data['Label'] == 1][var]
+    
+    t_statistic, p_value = stats.ttest_ind(real_data, fake_data, equal_var=False)
+    
+    if p_value < 0.05:  # You can adjust the significance level (alpha) as needed
+        print(f'T-test for {var}: Statistically significant (p-value = {p_value})')
+    else:
+        print(f'T-test for {var}: Not statistically significant (p-value = {p_value})')
+
+#Bivariate analysis----->CROSS TAB
+import pandas as pd
+
+
+
+# List of independent variables
+independent_variables = ['Author', 'Title', 'Text', 'Language', 'Site_url', 'Type', 'HasImage']
+
+# Iterate through each independent variable and create a crosstab
+for var in independent_variables:
+    crosstab = pd.crosstab(index=data[var], columns=data['Label'], rownames=['Categories'], colnames=['Label'], margins=True, margins_name='Total')
+    
+    print(f'===========CROSSTAB FOR {var}===========\n')
+    
+    print(crosstab)
+    print('\n')
+
+#Bivariate analysis----->CHI - SQUARE TEST
+import pandas as pd
+from scipy.stats import chi2_contingency
+
+
+
+# List of independent variables
+independent_variables = ['Author', 'Title', 'Text', 'Language', 'Site_url', 'Type', 'HasImage']
+
+# Iterate through each independent variable and perform a chi-square test
+for var in independent_variables:
+    observed = pd.crosstab(data[var], data['Label'])
+    chi2, p, _, _ = chi2_contingency(observed)
+    
+    print(f'=====Chi-square test for {var}:=====')
+    print(f'Chi-square value: {chi2}')
+    print(f'P-value: {p}')
+    print('\n')
+
+#Splitting dependent and independent variable and Creating dummies.
+
+X = data[['Author', 'Title', 'Text', 'Language', 'Site_url', 'Type', 'HasImage']]
+y = data['Label']
+
+# Create dummy variables for categorical columns
+X = pd.get_dummies(X, columns=['Author', 'Language', 'Type'], drop_first=True)
+
+X = X.apply(pd.to_numeric, errors='coerce')
+# Splitting Train and Test Data Set
+from sklearn.model_selection import train_test_split
+
+# Split the data into training and testing sets (customize test_size and random_state)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+X_train.dtypes
+X_train.columns
+# #Logistic Regression Model and Summary
+# import statsmodels.api as sm
+
+# # Convert labels to 0 and 1 (assuming 'real' corresponds to 0 and 'fake' corresponds to 1)
+# y_train = y_train.map({'real': 0, 'fake': 1})
+
+# # Add a constant (intercept) to the independent variables
+# X_train = sm.add_constant(X_train)
+
+# # Fit the logistic regression model
+# model = sm.Logit(y_train, X_train)
+# result = model.fit()
+
+# # Print the summary
+# print(result.summary())
+
+y_train.dtypes
+X_train.dtypes
+print(X_train.columns)
+
+non_numeric_columns = X_train.select_dtypes(exclude=[np.number]).columns
+print(non_numeric_columns)
+# Create a list of author columns by selecting columns that start with 'Author_'
+author_columns = [col for col in X_train.columns if col.startswith('Author_')]
+
+# Apply get_dummies to all author columns
+X_train = pd.get_dummies(X_train, columns=author_columns, drop_first=True)
+
+# Create a list of author columns by selecting columns that start with 'Author_'
+language_columns = [col for col in X_train.columns if col.startswith('Language_')]
+
+# Apply get_dummies to all author columns
+X_train = pd.get_dummies(X_train, columns=language_columns, drop_first=True)
+
+# Create a list of type columns by selecting columns that start with 'Type_'
+type_columns = [col for col in X_train.columns if col.startswith('Type_')]
+
+# Apply get_dummies to all type columns
+X_train = pd.get_dummies(X_train, columns=type_columns, drop_first=True)
+
+X_train.columns
+# # Create dummy variables for categorical columns
+# X_train = pd.get_dummies(X_train, columns=['Author_'], drop_first=True)
+
+# # Create a list of language columns by selecting columns that start with 'Language_'
+# language_columns = [col for col in X_train.columns if col.startswith('Language_')]
+
+# # Apply get_dummies to all language columns
+# X_train = pd.get_dummies(X_train, columns=language_columns, drop_first=True)
+
+# # Create a list of type columns by selecting columns that start with 'Type_'
+# type_columns = [col for col in X_train.columns if col.startswith('Type_')]
+
+# # Apply get_dummies to all type columns
+# X_train = pd.get_dummies(X_train, columns=type_columns, drop_first=True)
+
+# # Splitting dependent and independent variable and Creating dummies
+
+# # ... (rest of your code)
+
+# # Fit the logistic regression model
+# model = sm.Logit(y_train, X_train)
+# result = model.fit()
+
+# # Display the summary
+# result.summary()
+
+# # Create dummy variables for categorical columns
+# author_columns = [col for col in X_train.columns if col.startswith('Author_')]
+# X_train = pd.get_dummies(X_train, columns=author_columns, drop_first=True)
+
+# language_columns = [col for col in X_train.columns if col.startswith('Language_')]
+# X_train = pd.get_dummies(X_train, columns=language_columns, drop_first=True)
+
+# type_columns = [col for col in X_train.columns if col.startswith('Type_')]
+# X_train = pd.get_dummies(X_train, columns=type_columns, drop_first=True)
+
+# # Splitting dependent and independent variable (if you haven't done this already)
+# ...
+
+# # Fit the logistic regression model
+# model = sm.Logit(y_train, X_train)
+# result = model.fit()
+
+# # Display the summary
+# result.summary()
+
+import statsmodels.api as sm
+
+# Define your dependent variable (y) and independent variables (X)
+y = data['Label']
+X = data[['Title', 'Text', 'Site_url', 'HasImage', 'Author', 'Language', 'Type']]
+
+# Fit the logistic regression model
+X = sm.add_constant(X)  # Add a constant term to the model
+model = sm.Logit(y, X)
+result = model.fit()
+
+# Display the summary
+print(result.summary())
+
+X_train.dtypes
+X_train.isnull().sum()
+y_train.isnull().sum()
+X_train.dtypes
+# Check the columns in X_train and X_test
+train_columns = X_train.columns
+test_columns = X_test.columns
+
+# Compare the columns
+if train_columns.equals(test_columns):
+    print("Columns in X_train and X_test match.")
+else:
+    print("Columns in X_train and X_test do not match.")
+    print("Columns in X_train:", train_columns)
+    print("Columns in X_test:", test_columns)
+
+# Identify and add any missing columns from X_train to X_test
+missing_columns = list(set(X_train.columns) - set(X_test.columns))
+default_value = 0  # You can set this to any default value you prefer
+
+# Create a DataFrame containing the missing columns with default values
+missing_data = pd.DataFrame({col: [default_value] * len(X_test) for col in missing_columns}, index=X_test.index)
+
+# Concatenate the missing data with X_test
+X_test = pd.concat([X_test, missing_data], axis=1)
+
+# Reorder the columns in X_test to match the order in X_train
+X_test = X_test[X_train.columns]
+
+# Now, you should have the same columns in both X_train and X_test
+
+# Check the modified X_test DataFrame
+print(X_test)
+
+# #validation
+# from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+
+# # Make predictions on the test data
+# y_pred = result.predict(X_test)
+# y_pred_binary = (y_pred > 0.5).astype(int)  # Convert probabilities to binary values (0 or 1)
+
+# # Calculate confusion matrix
+# conf_matrix = confusion_matrix(y_test, y_pred_binary)
+# print("Confusion Matrix:\n", conf_matrix)
+
+# # Calculate accuracy
+# accuracy = accuracy_score(y_test, y_pred_binary)
+# print("Accuracy:", accuracy)
+
+# # Calculate precision
+# precision = precision_score(y_test, y_pred_binary)
+# print("Precision:", precision)
+
+# # Calculate recall
+# recall = recall_score(y_test, y_pred_binary)
+# print("Recall:", recall)
+
+# # Calculate F1-score
+# f1 = f1_score(y_test, y_pred_binary)
+# print("F1 Score:", f1)
+
+# # Calculate ROC AUC
+# roc_auc = roc_auc_score(y_test, y_pred)
+# print("ROC AUC:", roc_auc)
+
+# Step 1: Ensure Matching Features
+# Check if columns in X_test match X_train
+mismatched_columns = set(X_train.columns) - set(X_test.columns)
+print("Mismatched columns between X_train and X_test:", mismatched_columns)
+# Step 2: Check for Missing Columns
+missing_columns = set(X_test.columns) - set(X_train.columns)
+print("Missing columns in X_train:", missing_columns)
+
+# Step 3: Ensure Consistent Preprocessing
+# Verify data types, encoding, scaling, and other preprocessing steps
+# Make sure X_train and X_test are consistent in preprocessing
+# Example:
+# 1. If you used Label Encoding, make sure it's applied consistently to both X_train and X_test.
+# 2. If you scaled the data, ensure the same scaling factors are used for both datasets.
+# 3. If you imputed missing values, apply the same imputation strategy.
+
+# # Step 3: Make predictions on the test data
+# y_pred = result.predict(X_test)
+# y_pred_binary = (y_pred > 0.5).astype(int)  # Convert probabilities to binary values (0 or 1)
+
+# Step 4: Verify Column Names and Order
+# Ensure both X_train and X_test have the same column names and order
+# Reorder columns in X_test to match X_train if needed
+X_test = X_test[X_train.columns]
+# Step 5: Recheck Data Split
+# Ensure that data was split correctly into training and testing sets
+# Double-check the indices used for the split
+from sklearn.model_selection import train_test_split
+
+# Check if the shapes of X_train and X_test are consistent
+if X_train.shape[0] + X_test.shape[0] == data.shape[0]:
+    print("Data split is consistent.")
+else:
+    print("Data split is inconsistent.")
+
+print(X_train.dtypes)
+print(X_test.dtypes)
+
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+
+# Make predictions on the data
+y_pred = result.predict(X)
+y_pred_binary = (y_pred > 0.5).astype(int)
+# Calculate confusion matrix
+conf_matrix = confusion_matrix(y, y_pred_binary)
+print("Confusion Matrix:\n", conf_matrix)
+# Calculate specificity
+specificity = conf_matrix[0][0] / (conf_matrix[0][0] + conf_matrix[0][1])
+
+# Calculate sensitivity
+sensitivity = conf_matrix[1][1] / (conf_matrix[1][0] + conf_matrix[1][1])
+
+print(f"Specificity: {specificity}")
+print(f"Sensitivity: {sensitivity}")
+# Calculate accuracy
+accuracy = accuracy_score(y, y_pred_binary)
+print("Accuracy:", accuracy)
+# Calculate precision
+precision = precision_score(y, y_pred_binary)
+print("Precision:", precision)
+# Calculate recall
+recall = recall_score(y, y_pred_binary)
+print("Recall:", recall)
+# Calculate F1 score
+f1 = f1_score(y, y_pred_binary)
+print("F1 Score:", f1)
+# Calculate ROC AUC score
+roc_auc = roc_auc_score(y, y_pred)
+print("ROC AUC:", roc_auc)
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_curve, auc
+
+fpr, tpr, thresholds = roc_curve(y, y_pred)
+roc_auc = auc(fpr, tpr)
+
+plt.figure(figsize=(8, 6))
+plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = %0.2f)' % roc_auc)
+plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver Operating Characteristic')
+plt.legend(loc='lower right')
+plt.show()
+
+# Calculate the KS statistic
+ks_statistic = max(tpr - fpr)
+print("KS Statistic:", ks_statistic)
+
+# Import necessary libraries
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load your dataset (replace with your data)
+# X should contain your feature variables, and y should contain your target variable (class labels).
+# Make sure to preprocess your data as needed before using K-NN.
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a K-NN classifier with a specific value of k (replace 'n_neighbors' with your desired value)
+knn = KNeighborsClassifier(n_neighbors=5)  # Example with k=5
+
+# Train the K-NN classifier on the training data
+knn.fit(X_train, y_train)
+
+# Make predictions on the test data
+y_pred = knn.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+report = classification_report(y_test, y_pred)
+
+# Print the accuracy and classification report
+print("Accuracy:", accuracy)
+print("Classification Report:\n", report)
+
+# Python code to calculate information gain and entropy. Additionally, I'll provide an example of how to compare different models based on these metrics 
+# using a dataset and the scikit-learn library. Note that we won't be implementing the entire decision tree algorithm but rather using these metrics
+# for feature selection and model comparison.
+# # First, let's calculate information gain and entropy:
+# import numpy as np
+
+# def entropy(y):
+#     unique, counts = np.unique(y, return_counts=True)
+#     p = counts / len(y)
+#     return -np.sum(p * np.log2(p))
+
+# def information_gain(X, y, feature):
+#     # Calculate the entropy of the original dataset
+#     original_entropy = entropy(y)
+    
+#     # Calculate the weighted sum of entropies for subsets based on the feature
+#     weighted_entropy = 0
+#     unique_values = np.unique(X[:, feature])
+    
+#     for value in unique_values:
+#         subset_indices = X[:, feature] == value
+#         subset_entropy = entropy(y[subset_indices])
+#         weight = len(y[subset_indices]) / len(y)
+#         weighted_entropy += weight * subset_entropy
+    
+#     # Calculate information gain
+#     return original_entropy - weighted_entropy
+
+# # Now, let's create a simple example to compare models using information gain:
+# # This code calculates information gain for each feature, selects the feature with the highest gain, and trains a decision tree using that feature. 
+# # You can adapt and extend this code to compare different models by creating separate decision trees with different features or subsets of your data. 
+# # The selected feature and model performance can help you make informed decisions about feature selection and model building.
+
+# from sklearn.datasets import load_iris
+# from sklearn.model_selection import train_test_split
+# from sklearn.tree import DecisionTreeClassifier
+# from sklearn.metrics import accuracy_score
+
+# # Load the Iris dataset
+# data = load_iris()
+# X = data.data
+# y = data.target
+
+# # Split the dataset into training and testing sets
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# # Calculate information gain for each feature
+# n_features = X.shape[1]
+# information_gains = [information_gain(X_train, y_train, feature) for feature in range(n_features)]
+
+# # Select the feature with the highest information gain
+# selected_feature = np.argmax(information_gains)
+
+# # Train a decision tree using the selected feature
+# clf = DecisionTreeClassifier()
+# clf.fit(X_train[:, [selected_feature]], y_train)
+# y_pred = clf.predict(X_test[:, [selected_feature]])
+
+# # Calculate accuracy of the model
+# accuracy = accuracy_score(y_test, y_pred)
+# print(f"Selected Feature: {selected_feature}")
+# print(f"Accuracy with the selected feature: {accuracy}")
+
+# pip install xgboost
+# # i will integrate XGBoost into my model.
+# # Step 1: Import Required Libraries
+import xgboost as xgb
+from xgboost import XGBClassifier
+
+# # Step 2: Split the Data
+# # Since my data is already split  into training and testing sets,i will proceed with the existing X_train, X_test, y_train, and y_test.
+# Step 3: Train the XGBoost Model
+# Create an XGBoost classifier
+xgb_model = XGBClassifier()
+
+# Train the model on the training data
+xgb_model.fit(X_train, y_train)
+
+# Step 4: Make Predictions
+# Make predictions on the test data
+y_pred_xgb = xgb_model.predict(X_test)
+# Step 5: Evaluate the XGBoost Model
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score
+
+# Calculate accuracy
+accuracy_xgb = accuracy_score(y_test, y_pred_xgb)
+print("\nAccuracy:\n", accuracy_xgb)
+
+# Calculate confusion matrix
+conf_matrix = confusion_matrix(y_test, y_pred_xgb)
+print("\nConfusion matrix\n",conf_matrix)
+# Calculate sensitivity (recall) and specificity
+true_negative, false_positive, false_negative, true_positive = conf_matrix.ravel()
+sensitivity = true_positive / (true_positive + false_negative)
+specificity = true_negative / (true_negative + false_positive)
+
+print("\nSensitivity (Recall):\n", sensitivity)
+print("\nSpecificity:\n", specificity)
+
+# Calculate precision
+precision_xgb = precision_score(y_test, y_pred_xgb)
+print("\nPrecision:\n", precision_xgb)
+import xgboost as xgb
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, precision_score, recall_score
+
+# Split your dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Define and train the XGBoost model
+xgb_model = xgb.XGBClassifier()
+xgb_model.fit(X_train, y_train)
+
+# Make predictions with XGBoost
+y_pred_xgb = xgb_model.predict(X_test)
+
+# Calculate accuracy, precision, and recall for the XGBoost model
+accuracy_xgb = accuracy_score(y_test, y_pred_xgb)
+precision_xgb = precision_score(y_test, y_pred_xgb)
+recall_xgb = recall_score(y_test, y_pred_xgb)
+
+print("XGBoost Model Performance:")
+print("Accuracy:", accuracy_xgb)
+print("Precision:", precision_xgb)
+print("Recall:", recall_xgb)
+
+# # Logistic Regression (LR) with K-Fold Cross-Validation
+# # Import the necessary libraries and Perform K-Fold Cross-Validation:
+
+# import numpy as np
+# from sklearn.model_selection import cross_val_score
+
+# # Set the number of folds (K)
+# k = 5  # You can choose the number of folds as needed
+
+# # Perform K-Fold Cross-Validation for LR
+# lr_scores = cross_val_score(model, X, y, cv=k, scoring='accuracy')
+
+# # Calculate the average accuracy and other metrics from lr_scores
+# lr_avg_accuracy = np.mean(lr_scores)
+# lr_avg_precision = np.mean(cross_val_score(model, X, y, cv=k, scoring='precision'))
+# lr_avg_recall = np.mean(cross_val_score(model, X, y, cv=k, scoring='recall'))
+
+
+# # XGBoost with K-Fold Cross-Validation
+# # Import the necessary libraries and Perform K-Fold Cross-Validation:
+
+# import xgboost as xgb
+# from sklearn.model_selection import cross_val_score
+
+# xgb_model = xgb.XGBClassifier()
+
+# # Perform K-Fold Cross-Validation for XGBoost
+# xgb_scores = cross_val_score(xgb_model, X_xgb, y_xgb, cv=k, scoring='accuracy')
+
+# # Calculate the average accuracy and
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import cross_val_score, KFold
+from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score, f1_score
+
+# Define your logistic regression model
+lr_model = LogisticRegression(max_iter=1000)
+
+# Define the number of folds (k)
+k = 5  # You can adjust this number
+
+# Define the scoring method (e.g., 'accuracy', 'precision', 'recall', 'f1')
+scoring = 'accuracy'  # You can change this to other metrics
+
+# Create a KFold object
+kf = KFold(n_splits=k, shuffle=True, random_state=42)
+
+# Perform k-fold cross-validation
+results = cross_val_score(lr_model, X, y, cv=kf, scoring=scoring)
+
+# Calculate and print the mean and standard deviation of the chosen metric
+mean_score = results.mean()
+std_score = results.std()
+print(f'{scoring} - Mean: {mean_score:.3f}, Std: {std_score:.3f}')
+
+from sklearn.model_selection import cross_val_score, KFold
+from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score, f1_score
+from sklearn.linear_model import LogisticRegression
+
+# Define your LR model
+lr_model = LogisticRegression(max_iter=1000)
+
+# Create a KFold object
+kf = KFold(n_splits=k, shuffle=True, random_state=42)
+
+# Specify the scoring methods
+scoring = {
+    'Accuracy': make_scorer(accuracy_score),
+    'Precision': make_scorer(precision_score),
+    'Recall': make_scorer(recall_score),
+    'F1': make_scorer(f1_score)
+}
+
+# Perform k-fold cross-validation for each scoring method
+for metric, scorer in scoring.items():
+    results = cross_val_score(lr_model, X, y, cv=kf, scoring=scorer)
+    mean_score = results.mean()
+    std_score = results.std()
+    print(f'LR - {metric} - Mean: {mean_score:.3f}, Std: {std_score:.3f}')
+
+# from sklearn.feature_extraction.text import TfidfVectorizer
+
+# # Initialize the TF-IDF vectorizer
+# tfidf_vectorizer = TfidfVectorizer()
+
+# # Fit and transform the training text data
+# X_train_tfidf = tfidf_vectorizer.fit_transform(X_train)
+# # Transform the test text data using the same vectorizer
+# X_test_tfidf = tfidf_vectorizer.transform(X_test)
+
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
+
+# Split the data into training and testing sets (customize test_size and random_state)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+# Define your SVM model
+svm_model = SVC(kernel='linear')  # You can choose the appropriate kernel for your problem
+
+
+# Fit the model to your training data
+svm_model.fit(X_train, y_train)
+
+# Make predictions on the test data
+y_pred = svm_model.predict(X_test)
+
+# Calculate evaluation metrics
+accuracy = accuracy_score(y_test, y_pred)
+precision = precision_score(y_test, y_pred)
+recall = recall_score(y_test, y_pred)
+f1 = f1_score(y_test, y_pred)
+
+# Print the evaluation metrics
+print("Accuracy:", accuracy)
+print("Precision:", precision)
+print("Recall:", recall)
+print("F1 Score:", f1)
